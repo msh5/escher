@@ -1,5 +1,4 @@
 import click
-import elasticsearch
 
 from escher import __version__
 
