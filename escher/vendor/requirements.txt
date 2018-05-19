@@ -1,2 +1,5 @@
 -i https://pypi.org/simple
 click==6.7
+elasticsearch==6.2.0
+tabulate==0.8.2
+urllib3==1.22

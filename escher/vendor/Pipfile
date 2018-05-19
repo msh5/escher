@@ -4,7 +4,9 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-click = "*"
+click = ">=6.0,<7"
+elasticsearch = ">=6.0.0,<7"
+tabulate = "*"
 
 [requires]
 python_version = "3.6"
