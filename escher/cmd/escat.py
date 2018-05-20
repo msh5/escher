@@ -21,13 +21,13 @@ def cli(ctx, host, port, ssl):
 @click.option('--local', is_flag=True, default=None)
 @click.option('--master-timeout', 'timeout')
 @click.option('--hint', '-h', 'hints', multiple=True)
-@click.option('--help', 'needs_help', is_flag=True, default=None)
+@click.option('--help-api', 'help_api', is_flag=True, default=None)
 @click.option('--sort', '-s', 'sort_hints', multiple=True)
 @click.option('--verbose', '-v', is_flag=True, default=None)
 @click.argument('names', nargs=-1)
 @click.pass_context
-def aliases(ctx, response_format, local, timeout, hints, needs_help,
-            sort_hints, verbose, names):
+def aliases(ctx, response_format, local, timeout, hints, help_api, sort_hints,
+            verbose, names):
     host = ctx.obj['host_spec']
     client = Elasticsearch(hosts=[host])
     params = {}
@@ -39,8 +39,8 @@ def aliases(ctx, response_format, local, timeout, hints, needs_help,
         params['master_timeout'] = timeout
     if hints:
         params['h'] = ','.join(hints)
-    if needs_help:
-        params['help'] = needs_help
+    if help_api:
+        params['help'] = help_api
     if sort_hints:
         params['s'] = ','.join(sort_hints)
     if verbose:
