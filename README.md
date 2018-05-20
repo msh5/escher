@@ -1,2 +1,3 @@
-# escher
-An Elasticsearch Command-line Client.
+# Escher CLI
+
+Yet another Elasticsearch client CLI.
