@@ -74,7 +74,7 @@ def aliases(ctx, response_format, local, timeout, hints, help_api, sort_hints,
 @click.option('--verbose', '-v', is_flag=True, default=None)
 @click.pass_context
 def allocation(ctx, response_format, local, timeout, node_ids, bytes_unit,
-               hints, help_api, sort_hints, verbose, names):
+               hints, help_api, sort_hints, verbose):
     host = ctx.obj['host_spec']
     client = Elasticsearch(hosts=[host])
     params = {}
@@ -96,12 +96,9 @@ def allocation(ctx, response_format, local, timeout, node_ids, bytes_unit,
         params['s'] = ','.join(sort_hints)
     if verbose:
         params['v'] = verbose
-    if names:
-        params['name'] = ','.join(names)
 
     resp_str = client.cat.allocation(**params)
-    resp = json.loads(resp_str) if resp_str else {}
-    click.echo(tabulate(resp.items()))
+    click.echo(resp_str)
 
 
 cli.add_command(aliases)
