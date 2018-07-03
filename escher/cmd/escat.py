@@ -1,9 +1,17 @@
+'''
+Define subcommands for 'escat'.
+'''
+
 import json
 
 import click
 from elasticsearch import Elasticsearch
 from escher import __version__
 from tabulate import tabulate
+
+ALLOCATION_BYTES_OPTIONS = [
+    'b', 'k', 'kb', 'm', 'mb', 'g', 'gb', 't', 'tb', 'p', 'pb'
+]
 
 
 @click.group()
@@ -53,7 +61,51 @@ def aliases(ctx, response_format, local, timeout, hints, help_api, sort_hints,
     click.echo(tabulate(resp.items()))
 
 
+@click.command()
+@click.option('--format', '-f', 'response_format')
+@click.option('--local', is_flag=True, default=None)
+@click.option('--master-timeout', 'timeout')
+@click.option('--node-id', 'node_ids', multiple=True)
+@click.option(
+    '--bytes', 'bytes_unit', type=click.Choice(ALLOCATION_BYTES_OPTIONS))
+@click.option('--hint', '-h', 'hints', multiple=True)
+@click.option('--help-api', 'help_api', is_flag=True, default=None)
+@click.option('--sort', '-s', 'sort_hints', multiple=True)
+@click.option('--verbose', '-v', is_flag=True, default=None)
+@click.pass_context
+def allocation(ctx, response_format, local, timeout, node_ids, bytes_unit,
+               hints, help_api, sort_hints, verbose, names):
+    host = ctx.obj['host_spec']
+    client = Elasticsearch(hosts=[host])
+    params = {}
+    if response_format:
+        params['format'] = response_format
+    if local:
+        params['local'] = local
+    if timeout:
+        params['master_timeout'] = timeout
+    if node_ids:
+        params['node_id'] = ','.join(node_ids)
+    if timeout:
+        params['bytes'] = bytes_unit
+    if hints:
+        params['h'] = ','.join(hints)
+    if help_api:
+        params['help'] = help_api
+    if sort_hints:
+        params['s'] = ','.join(sort_hints)
+    if verbose:
+        params['v'] = verbose
+    if names:
+        params['name'] = ','.join(names)
+
+    resp_str = client.cat.allocation(**params)
+    resp = json.loads(resp_str) if resp_str else {}
+    click.echo(tabulate(resp.items()))
+
+
 cli.add_command(aliases)
+cli.add_command(allocation)
 
 
 def main():
